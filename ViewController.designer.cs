@@ -9,23 +9,33 @@ using System.CodeDom.Compiler;
 
 namespace RCTest
 {
-    [Register ("ViewController")]
-    partial class ViewController
-    {
-        [Action ("BramsTextBoxEntered:")]
-        partial void BramsTextBoxEntered (Foundation.NSObject sender);
+	[Register ("ViewController")]
+	partial class ViewController
+	{
+		[Outlet]
+		AppKit.NSTextField BramsTextBox { get; set; }
 
-        [Action ("ClickedButton:")]
-        partial void ClickedButton (AppKit.NSButton sender);
+		[Action ("BramsTextBoxEntered:")]
+		partial void BramsTextBoxEntered (Foundation.NSObject sender);
 
-        [Action ("ClickedTestCashflowButton:")]
-        partial void ClickedTestCashflowButton (AppKit.NSButton sender);
+		[Action ("ClickedButton:")]
+		partial void ClickedButton (AppKit.NSButton sender);
 
-        [Action ("ClickedTestOthersButton:")]
-        partial void ClickedTestOthersButton (AppKit.NSButton sender);
-        
-        void ReleaseDesignerOutlets ()
-        {
-        }
-    }
+		[Action ("ClickedTestCashflowButton:")]
+		partial void ClickedTestCashflowButton (AppKit.NSButton sender);
+
+		[Action ("ClickedTestLoanButton:")]
+		partial void ClickedTestLoanButton (AppKit.NSButton sender);
+
+		[Action ("ClickedTestOthersButton:")]
+		partial void ClickedTestOthersButton (AppKit.NSButton sender);
+		
+		void ReleaseDesignerOutlets ()
+		{
+			if (BramsTextBox != null) {
+				BramsTextBox.Dispose ();
+				BramsTextBox = null;
+			}
+		}
+	}
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-
 using AppKit;
 using Foundation;
 using ResilienceClasses;
@@ -52,11 +51,16 @@ namespace RCTest
 
         partial void ClickedTestOthersButton(AppKit.NSButton sender)
         {
-//            this._TestProperty();
-//            this._TestCashflow();
-//            this._TestDocument();
-//            this._TestDocumentRecord();
-//            this._TestEntity();
+            this._TestProperty();
+            this._TestCashflow();
+            this._TestDocument();
+            this._TestDocumentRecord();
+            this._TestEntity();
+            this._TestLoan();
+        }
+
+        partial void ClickedTestLoanButton(AppKit.NSButton sender)
+        {
             this._TestLoan();
         }
 
@@ -66,9 +70,9 @@ namespace RCTest
             Console.WriteLine(property.PropertyID() + "," + property.Address());
 
             clsCSVTable tbl = new clsCSVTable(clsProperty.strPropertyPath);
-            tbl.SaveAs("/Users/aaronlebovitz/Documents/Professional/Resilience/tblPropertyTest.csv");
+            tbl.SaveAs("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblPropertyTest.csv");
             clsProperty badproperty = new clsProperty("no", "no", "no", "no", -1, "no");
-            Console.WriteLine(badproperty.Save("/Users/aaronlebovitz/Documents/Professional/Resilience/tblPropertyTest.csv"));
+            Console.WriteLine(badproperty.Save("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblPropertyTest.csv"));
 
             tbl = new clsCSVTable(clsProperty.strPropertyPath);
             string[] strNewRecord = new string[tbl.Width() - 1];
@@ -77,7 +81,7 @@ namespace RCTest
                 strNewRecord[i] = "new " + i.ToString();
             }
             tbl.New(strNewRecord);
-            tbl.SaveAs("/Users/aaronlebovitz/Documents/Professional/Resilience/tblPropertyTest.csv");
+            tbl.SaveAs("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblPropertyTest.csv");
         }
 
         private void _TestCashflow()
@@ -86,7 +90,7 @@ namespace RCTest
             Console.WriteLine(cf.TransactionID() + "," + cf.Amount() + "," + cf.PayDate());
 
             clsCSVTable testTable = new clsCSVTable(clsCashflow.strCashflowPath);
-            testTable.SaveAs("/Users/aaronlebovitz/Documents/Professional/Resilience/tblCashflowTest.csv");
+            testTable.SaveAs("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblCashflowTest.csv");
 
             DateTime pd = DateTime.Today;
             DateTime rd = DateTime.Today;
@@ -96,7 +100,7 @@ namespace RCTest
             bool act = false;
             clsCashflow.Type t = clsCashflow.Type.RehabDraw;
             clsCashflow cfTest = new clsCashflow(pd, rd, dd, pid, a, act, t);
-            Console.WriteLine(cfTest.Save("/Users/aaronlebovitz/Documents/Professional/Resilience/tblCashflowTest.csv"));
+            Console.WriteLine(cfTest.Save("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblCashflowTest.csv"));
         }
 
         private void _TestDocument()
@@ -108,10 +112,10 @@ namespace RCTest
                                   ((int)document.DocumentType()).ToString());
             }
             clsCSVTable testTable = new clsCSVTable(clsDocument.strDocumentPath);
-            testTable.SaveAs("/Users/aaronlebovitz/Documents/Professional/Resilience/tblDocumentTest.csv");
+            testTable.SaveAs("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblDocumentTest.csv");
 
             clsDocument newDoc = new clsDocument("test", 1, clsDocument.Type.ClosingProtectionLetter);
-            Console.WriteLine(newDoc.Save("/Users/aaronlebovitz/Documents/Professional/Resilience/tblDocumentTest.csv"));
+            Console.WriteLine(newDoc.Save("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblDocumentTest.csv"));
         }
 
         private void _TestDocumentRecord()
@@ -124,11 +128,11 @@ namespace RCTest
             }
 
             clsCSVTable testTable = new clsCSVTable(clsDocumentRecord.strDocumentRecordPath);
-            testTable.SaveAs("/Users/aaronlebovitz/Documents/Professional/Resilience/tblDocumentRecordTest.csv");
+            testTable.SaveAs("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblDocumentRecordTest.csv");
             clsDocumentRecord newRec = new clsDocumentRecord(1, System.DateTime.Now, System.DateTime.Today, 1, 2,
                                                              clsDocumentRecord.Status.Notarized,
                                                              clsDocumentRecord.Transmission.Electronic);
-            Console.WriteLine(newRec.Save("/Users/aaronlebovitz/Documents/Professional/Resilience/tblDocumentRecordTest.csv"));
+            Console.WriteLine(newRec.Save("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblDocumentRecordTest.csv"));
         }
 
         private void _TestEntity()
@@ -140,15 +144,19 @@ namespace RCTest
             }
 
             clsCSVTable testTable = new clsCSVTable(clsEntity.strEntityPath);
-            testTable.SaveAs("/Users/aaronlebovitz/Documents/Professional/Resilience/tblEntityTest.csv");
+            testTable.SaveAs("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblEntityTest.csv");
             clsEntity newEntity = new clsEntity("test entity", "42 wallaby way", "sydney", "AU", 33000, "312-fnd-nemo", "marlin", "clown@fish.com");
-            Console.WriteLine(newEntity.Save("/Users/aaronlebovitz/Documents/Professional/Resilience/tblEntityTest.csv"));
+            Console.WriteLine(newEntity.Save("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/tblEntityTest.csv"));
         }
 
         private void _TestLoan()
         {
-            System.IO.StreamWriter sr = new System.IO.StreamWriter("/Users/aaronlebovitz/Documents/Professional/Resilience/DebugLog.txt");
-            for (int i = 0; i < 1; i++)
+            System.IO.StreamWriter sr = new System.IO.StreamWriter("/Users/" + Environment.UserName + "/Documents/Professional/Resilience/DebugLog.txt");
+            //write header
+            sr.WriteLine("Property,State,Principal Balance,Accrued Interest,Proj Hard Int,Proj Additional Int,Proj Return,Proj IRR,Principal  Paid,Interest  Paid,Addl Int  Paid,Act Return,Act IRR,Rehab Remain,Rehab  Spent,Sale Date,Purchase Date,Days");
+            clsCSVTable tbl = new clsCSVTable(clsLoan.strLoanPath);
+
+            for (int i = 0; i < tbl.Length(); i++)
             {
                 this._WriteLoan(sr, i);
             }
@@ -165,36 +173,57 @@ namespace RCTest
             titleHolder = new clsEntity(loan.TitleHolderID());
             titleCompany = new clsEntity(loan.TitleCompanyID());
             coBorrower = new clsEntity(loan.CoBorrowerID());
+            clsLoan.State eStatus = loan.Status();
 
-            sr.WriteLine("BEGIN LOAN " + loanID.ToString() + " : " + loan.PropertyID().ToString());
+            sr.Write(loan.Property().Address() + ",");
+            sr.Write(eStatus.ToString().ToUpper() + ",");
 
-            sr.Write(loan.Property().Address() + "," + loan.Property().State() + ",");
+            if (eStatus == clsLoan.State.Cancelled)
+            {
+                sr.Write(",,,,,,,,,,,,,,,,");
+            }
+            else
+            {
+                if (loan.Status() == clsLoan.State.Sold)
+                {
+                    sr.Write(",,,,,,");
+                    sr.Write(loan.PrincipalPaid().ToString() + ",");
+                    sr.Write(loan.InterestPaid().ToString() + ",");
+                    sr.Write(loan.AdditionalInterestPaid().ToString() + ",");
+                    sr.Write(loan.Return(false).ToString() + ",");
+                    sr.Write(loan.IRR(false).ToString() + ",");
+                }
+                else
+                {
+                    sr.Write(loan.Balance().ToString() + ",");
+                    sr.Write(loan.AccruedInterest().ToString() + ",");
+                    sr.Write(loan.ProjectedHardInterest().ToString() + ",");
+                    sr.Write(loan.ProjectedAdditionalInterest().ToString() + ",");
+                    sr.Write(loan.Return(false).ToString() + ",");
+                    sr.Write(loan.IRR(false).ToString() + ",");
+                    sr.Write(",,,,,");
+                }
+                sr.Write(loan.RehabRemain().ToString() + ",");
+                sr.Write(loan.RehabSpent().ToString() + ",");
+                sr.Write(loan.SaleDate().ToShortDateString() + ",");
+                sr.Write(loan.OriginationDate().ToShortDateString() + ",");
+                sr.Write((loan.SaleDate() - loan.OriginationDate()).TotalDays.ToString() + ",");
+            }
+
             sr.Write(titleHolder.Name() + ",");
             sr.Write(coBorrower.Name() + ",");
-            sr.WriteLine(titleCompany.Name());
-
+            sr.Write(titleCompany.Name() +",");
             sr.Write(loan.Rate().ToString() + ",");
             sr.Write(loan.PenaltyRate().ToString() + ",");
-            sr.Write(loan.OriginationDate().ToLongDateString() + ",");
-            sr.WriteLine(loan.MaturityDate().ToLongDateString());
-
-            sr.Write(loan.Status() + ",");
-            sr.Write(loan.Balance().ToString() + ",");
-            sr.Write(loan.AccruedInterest().ToString() + ",");
-            sr.Write(loan.ProjectedHardInterest().ToString() + ",");
-            sr.WriteLine(loan.ImpliedAdditionalInterest().ToString());
-
-            sr.Write(loan.Return(false).ToString() + ",");
-            sr.WriteLine(loan.IRR(false).ToString());
-
+            sr.Write(loan.OriginationDate().ToShortDateString() + ",");
+            sr.Write(loan.MaturityDate().ToShortDateString()+ ",");
+            sr.Write(loan.GrossReturn(false).ToString() + ",");
+            sr.Write(loan.GrossReturn(true).ToString() + ",");
             sr.Write(loan.Return(true).ToString() +",");
-            sr.WriteLine(loan.IRR(true).ToString());
+            sr.Write(loan.IRR(true).ToString()+ ",");
+            sr.Write(loan.FirstRehabEstimate().ToString()+ ",");
 
-            sr.Write(loan.RehabSpent().ToString() + ",");
-            sr.Write(loan.RehabRemain().ToString() + ",");
-            sr.WriteLine(loan.FirstRehabEstimate().ToString());
-
-            sr.WriteLine("END OF LOAN");
+            sr.WriteLine();
             sr.Flush();
         }
     }
